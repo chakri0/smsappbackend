@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"lib": ["es5", "es6"],
+		"declaration": true,
+		"declarationMap": true,
+		"target": "ES6",
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"outDir": "./build",
+		"esModuleInterop": true,
+		"strict": true,
+		"strictFunctionTypes": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"sourceMap": true
+	},
+	"include": ["src/**/*.ts"]
+}

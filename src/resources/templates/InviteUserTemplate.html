@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Welcome to PhillysBestPizza</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			p {
+				font-size: 16px;
+				margin: 0;
+				padding: 10px 0;
+			}
+		</style>
+	</head>
+
+	<body
+		style="
+			font-family: Arial, sans-serif;
+			background-color: #f5f5f5;
+			margin: 0;
+			padding: 0;
+		"
+	>
+		<div
+			style="
+				max-width: 600px;
+				margin: 0 auto;
+				padding: 20px;
+				background-color: #fff;
+				border-radius: 5px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			"
+		>
+			<p>Hi {{ name }},</p>
+
+			<p>
+				Welcome to PhillysBestPizza! You are invited by the admin in
+				PhillysBestPizza.
+			</p>
+			<p>Please click the link below to set up your account:</p>
+			<br />
+
+			<p>
+				<a
+					class="button"
+					href="{{ Setup Link }}"
+					style="
+						padding: 10px;
+						background-color: #4287f5;
+						color: #fff;
+					"
+					>Setup Your Account</a
+				>
+			</p>
+			<br />
+
+			<p>
+				For any queries, please email us at
+				<a href="mailto:support@phillysbestpizza.com"
+					>support@phillysbestpizza.com</a
+				>
+			</p>
+			<br />
+
+			<p>Thank you,<br />Team PhillysBestPizza.</p>
+		</div>
+	</body>
+</html>
