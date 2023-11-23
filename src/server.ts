@@ -30,8 +30,13 @@ class Server {
 
 	private configureMiddleware() {
 		this.app.use(express.json());
+		const allowedOrigins = [
+			'http://localhost:1234',
+			'https://www.stockwellnessystem.com',
+			'https://main.d255kynncwqvj1.amplifyapp.com/',
+		];
 		const corsOptions: CorsOptions = {
-			origin: 'http://localhost:1234',
+			origin: allowedOrigins,
 			methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 			credentials: true,
 		};
