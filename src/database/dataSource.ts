@@ -10,10 +10,10 @@ export function getConfig() {
 	return {
 		driver: mysqlDriver,
 		type: 'mysql',
-		host: 'localhost',
+		host: 'smsappdatabase.cvwwxdsqezfl.us-east-1.rds.amazonaws.com',
 		port: process.env.MY_SQL_PORT,
-		username: 'root',
-		password: '',
+		username: 'admin',
+		password: 'test1234',
 		database: 'phillypizza_local',
 		synchronize: false,
 		migrations: ['src/database/migrations/*.ts'],
