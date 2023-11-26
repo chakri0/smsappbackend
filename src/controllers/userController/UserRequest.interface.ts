@@ -9,3 +9,12 @@ export interface InviteUserReq {
 	role: string;
 	branchId: string;
 }
+
+export interface UpdateUserReq {
+	firstName: string;
+	lastName?: string;
+	oldPassword?: string;
+	newPassword?: string;
+	phoneNumber?: number;
+	avatar?: string;
+}

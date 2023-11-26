@@ -22,12 +22,22 @@ class UserRoutes {
 			this.auth.verifyAccessToken,
 			this.userController.inviteUser,
 		);
-		this.router.post('/verify', this.userController.verifyUser);
-		this.router.post('/setup', this.userController.accoutSetup);
+		// this.router.post('/verify', this.userController.verifyUser);
+		this.router.post('/setup', this.userController.accountSetup);
+		this.router.put(
+			'/updateProfile',
+			this.auth.verifyAccessToken,
+			this.userController.updateProfile,
+		);
 		this.router.get(
 			'/listByBranch/:branchId',
 			this.auth.verifyAccessToken,
 			this.userController.usersListByBranch,
+		);
+		this.router.get(
+			'/me',
+			this.auth.verifyAccessToken,
+			this.userController.profile,
 		);
 	}
 

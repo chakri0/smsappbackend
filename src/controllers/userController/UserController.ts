@@ -1,7 +1,11 @@
 import express from 'express';
 import { UserRepository } from '../../repositories/UserRepositoy';
 import { UserContext } from '../../database/instanses/authentication/UserContext';
-import { InviteUserReq, LoginReq } from './UserRequest.interface';
+import {
+	InviteUserReq,
+	LoginReq,
+	UpdateUserReq,
+} from './UserRequest.interface';
 import { NotFoundException } from '../../common/exception/NotFoundException';
 
 export interface TypedRequestBody<T> extends Express.Request {
@@ -28,14 +32,18 @@ class UserController {
 		}
 	};
 
-	public profile: express.RequestHandler = (
+	public profile: express.RequestHandler = async (
 		req: express.Request,
 		res: express.Response,
 		next: express.NextFunction,
 	) => {
 		try {
 			const activeUser = UserContext.getActiveUser();
-			res.status(200).json({ activeUser });
+			if (!activeUser) {
+				throw new NotFoundException(`No user found`);
+			}
+			const user = await this.userRepository.profile(activeUser.id);
+			res.status(200).json({ user });
 		} catch (error) {
 			next(error);
 		}
@@ -79,14 +87,36 @@ class UserController {
 		}
 	};
 
-	public accoutSetup: express.RequestHandler = async (
-		req: TypedRequestBody<{ email: string; password: string }>,
+	public accountSetup: express.RequestHandler = async (
+		req: TypedRequestBody<{
+			token: string;
+			email: string;
+			password: string;
+		}>,
 		res: express.Response,
 		next: express.NextFunction,
 	) => {
 		try {
-			const { email, password } = req.body;
-			await this.userRepository.accoutSetup(email, password);
+			const { token, email, password } = req.body;
+			await this.userRepository.accountSetup(token, email, password);
+			res.status(200).json({});
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	public updateProfile: express.RequestHandler = async (
+		req: TypedRequestBody<UpdateUserReq>,
+		res: express.Response,
+		next: express.NextFunction,
+	) => {
+		try {
+			const activeUser = UserContext.getActiveUser();
+			if (!activeUser) {
+				throw new NotFoundException(`No user found`);
+			}
+			const data = req.body;
+			await this.userRepository.updateProfile(data, activeUser.id);
 			res.status(200).json({});
 		} catch (error) {
 			next(error);

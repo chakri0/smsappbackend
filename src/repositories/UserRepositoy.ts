@@ -16,6 +16,7 @@ import { EmailToken, tokenType } from '../database/entities/EmailToken';
 import { EmailTokenDatastore } from '../database/datastores/EmailTokenDatastore';
 import { Mail } from '../database/instanses/mail/Mail';
 import { NotFoundException } from '../common/exception/NotFoundException';
+import { UpdateUserReq } from '../controllers/userController/UserRequest.interface';
 
 export class UserRepository {
 	private userDatastore: UserDatastore;
@@ -177,7 +178,17 @@ export class UserRepository {
 		await this.emailTokenDatastore.deleteTokenByRole(userRole.id);
 	}
 
-	public async accoutSetup(email: string, password: string): Promise<void> {
+	public async accountSetup(
+		token: string,
+		email: string,
+		password: string,
+	): Promise<void> {
+		const tokenVerify =
+			await this.emailTokenDatastore.getTokenDetails(token);
+		if (!tokenVerify) {
+			throw new NotFoundException('Verification token expire');
+		}
+
 		const userDetail = await this.userDatastore.getUserByEmail(email);
 		if (!userDetail) {
 			throw new NotFoundException('User not found');
@@ -189,6 +200,16 @@ export class UserRepository {
 		const hashPass = await this.passwordManager.hashPassword(password);
 		userDetail.password = hashPass;
 		await this.userDatastore.save(userDetail);
+
+		const userRole = await this.userDatastore.getUserRoleById(
+			userDetail.id,
+		);
+		if (!userRole) {
+			throw new NotFoundException('UserRole not found');
+		}
+		userRole.isVerified = true;
+		await this.userDatastore.saveUserRole(userRole);
+		await this.emailTokenDatastore.deleteTokenByRole(userRole.id);
 	}
 
 	public async getUsersListByBranchId(
@@ -211,5 +232,50 @@ export class UserRepository {
 			userResponse(userDetail),
 		);
 		return formattedResponse;
+	}
+	public async updateProfile(
+		data: UpdateUserReq,
+		activeUserId: string,
+	): Promise<void> {
+		const {
+			firstName,
+			lastName,
+			avatar,
+			phoneNumber,
+			oldPassword,
+			newPassword,
+		} = data;
+
+		const userDetail = await this.userDatastore.getById(activeUserId);
+		if (!userDetail) {
+			throw new NotFoundException(`User not found`);
+		}
+
+		if (oldPassword && newPassword) {
+			const compare = await this.passwordManager.comparePassword(
+				oldPassword,
+				userDetail.password,
+			);
+			if (!compare) {
+				throw new Error(`Old password does not match`);
+			}
+
+			const hashPass =
+				await this.passwordManager.hashPassword(newPassword);
+			userDetail.password = hashPass;
+		}
+		userDetail.firstName = firstName ?? userDetail.firstName;
+		userDetail.lastName = lastName ?? userDetail.lastName;
+		userDetail.avatar = avatar ?? userDetail.avatar;
+		userDetail.phoneNumber = phoneNumber ?? userDetail.phoneNumber;
+		await this.userDatastore.save(userDetail);
+	}
+
+	public async profile(activeUserId: string): Promise<FormattedUserResponse> {
+		const userDetail = await this.userDatastore.getById(activeUserId);
+		if (!userDetail) {
+			throw new NotFoundException(`User not found`);
+		}
+		return userResponse(userDetail);
 	}
 }
