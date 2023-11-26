@@ -1,7 +1,7 @@
 export default {
 	app: {
 		frontend: {
-			baseUrl: 'http://localhost:1234',
+			baseUrl: 'https://main.d255kynncwqvj1.amplifyapp.com',
 			accountSetup: '/accountSetup',
 		},
 		backend: {
@@ -11,11 +11,11 @@ export default {
 	email: {
 		host: 'smtp.gmail.com',
 		port: 587,
-		fromEmail: 'choudharyanan0@gmail.com',
+		fromEmail: 'chakradharkavalakuntla@gmail.com',
 		secure: false,
 		auth: {
-			user: 'choudharyanan0@gmail.com',
-			pass: 'nalpoiaqxpwjlqvm',
+			user: 'chakradharkavalakuntla@gmail.com',
+			pass: 'nuqqgqtpajukbnkl',
 		},
 		logger: true,
 	},
