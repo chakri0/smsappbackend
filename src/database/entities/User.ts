@@ -60,6 +60,6 @@ export class User extends BaseEntity {
 	@JoinColumn({ name: 'branchId' })
 	public branch!: Branch;
 
-	@OneToMany(() => InventoryItems, (inventoryItem) => inventoryItem.user)
+	@OneToMany(() => InventoryItems, (inventoryItem) => inventoryItem.addedBy)
 	public inventoryItem!: InventoryItems[];
 }

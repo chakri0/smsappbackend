@@ -41,7 +41,7 @@ export class InventoryItems {
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
 	@JoinColumn({ name: 'addedBy' })
-	public user!: User;
+	public addedBy!: User;
 
 	@OneToOne(() => Items, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
 	@JoinColumn({ name: 'itemId' })
