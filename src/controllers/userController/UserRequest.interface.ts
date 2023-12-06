@@ -10,11 +10,18 @@ export interface InviteUserReq {
 	branchId: string;
 }
 
-export interface UpdateUserReq {
+export interface UpdateUserProfileRequest {
 	firstName: string;
 	lastName?: string;
 	oldPassword?: string;
 	newPassword?: string;
 	phoneNumber?: number;
 	avatar?: string;
+}
+
+export interface UpdateUserRequest {
+	userId: string;
+	firstName: string;
+	role: 'superAdmin' | 'admin' | 'manager';
+	branch: string;
 }

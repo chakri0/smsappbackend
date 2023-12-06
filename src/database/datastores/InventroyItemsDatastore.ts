@@ -1,3 +1,4 @@
+import { itemTotalStockResponse } from '../../repositories/DashboardRepository';
 import dataSource from '../dataSource';
 import { InventoryItems } from '../entities/InventoryItems';
 
@@ -23,6 +24,7 @@ export class InventoryItemsDatastore {
 				.getRepository(InventoryItems)
 				.createQueryBuilder('InventoryItems')
 				.leftJoinAndSelect('InventoryItems.item', 'item')
+				.leftJoinAndSelect('item.category', 'category')
 				.leftJoin('InventoryItems.addedBy', 'addedBy')
 				.addSelect([
 					'addedBy.id',
@@ -61,5 +63,57 @@ export class InventoryItemsDatastore {
 			return queryResult;
 		}
 		return null;
+	}
+
+	public async getByItemId(itemId: string): Promise<InventoryItems | null> {
+		let queryResult: InventoryItems | undefined | null;
+		await dataSource.transaction(async (manager) => {
+			queryResult = await manager
+				.getRepository(InventoryItems)
+				.createQueryBuilder('InventoryItems')
+				.leftJoinAndSelect('InventoryItems.item', 'item')
+				.where('item.id = :id', { id: itemId })
+				.getOne();
+		});
+		if (queryResult) {
+			return queryResult;
+		}
+		return null;
+	}
+
+	public async getItemsTotalStocks(): Promise<itemTotalStockResponse[]> {
+		try {
+			let queryResult: itemTotalStockResponse[] = [];
+			await dataSource.transaction(async (manager) => {
+				queryResult = await manager
+					.getRepository(InventoryItems)
+					.createQueryBuilder('inventoryitems')
+					.select([
+						'items.name as itemName',
+						'SUM(inventoryitems.availableQuantity) as availableQuantity',
+						'(SUM(inventoryitems.quantity) - SUM(inventoryitems.availableQuantity)) as dailyConsumption',
+						'items.dailyThreshold',
+						'items.weeklyThreshold',
+						'items.overallThreshold',
+						'categories.name as category',
+					])
+					.leftJoin(
+						'items',
+						'items',
+						'items.id = inventoryitems.itemId',
+					)
+					.leftJoin(
+						'categories',
+						'categories',
+						'categories.id = items.categoryId',
+					)
+					.groupBy('items.id')
+					.getRawMany();
+			});
+			return queryResult;
+		} catch (error) {
+			console.error('Error in getInventorySummary:', error);
+			throw error; // Rethrow the error for the calling code to handle
+		}
 	}
 }

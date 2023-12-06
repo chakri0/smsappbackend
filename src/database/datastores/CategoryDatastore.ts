@@ -50,4 +50,21 @@ export class CategoryDatastore {
 		}
 		return null;
 	}
+
+	public async getTotalCategories(): Promise<number | undefined> {
+		try {
+			let queryResult: number | undefined = 0;
+			await dataSource.transaction(async (manager) => {
+				queryResult = await manager
+					.getRepository(Categories)
+					.createQueryBuilder('categories')
+					.select('COUNT(categories.id)', 'count')
+					.getRawOne();
+			});
+			return queryResult;
+		} catch (error) {
+			console.error('Error in getTotalCategories:', error);
+			throw error;
+		}
+	}
 }

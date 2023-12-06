@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import AuthenticationService from '../../database/instanses/authentication/AuthenticationService';
-import InventoryItemsController from '../../controllers/inventoryItemsController/inventoryItemsController';
+import InventoryItemsController from '../../controllers/inventoryItemsController/InventoryItemsController';
 
 export class InventoryItemsRoutes {
 	private router: Router;
@@ -28,6 +28,11 @@ export class InventoryItemsRoutes {
 			'/update/:inventoryItemId',
 			this.auth.verifyAccessToken,
 			this.inventoryItemController.updateInventoryItems,
+		);
+		this.router.delete(
+			'/delete/:inventoryItemId',
+			this.auth.verifyAccessToken,
+			this.inventoryItemController.deleteInventoryItem,
 		);
 	}
 

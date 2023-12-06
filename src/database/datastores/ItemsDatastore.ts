@@ -51,4 +51,21 @@ export class ItemsDatastore {
 		}
 		return null;
 	}
+
+	public async getTotalItems(): Promise<number> {
+		try {
+			let queryResult: number | undefined = 0;
+			await dataSource.transaction(async (manager) => {
+				queryResult = await manager
+					.getRepository(Items)
+					.createQueryBuilder('Items')
+					.select('COUNT(items.id)', 'count')
+					.getRawOne();
+			});
+			return queryResult ?? 0;
+		} catch (error) {
+			console.error('Error in getTotalItems:', error);
+			throw error;
+		}
+	}
 }

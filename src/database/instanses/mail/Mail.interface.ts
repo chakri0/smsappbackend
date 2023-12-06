@@ -5,4 +5,6 @@ export interface IMail {
 		name: string,
 		token: string,
 	): Promise<void>;
+
+	sendForgotPasswordEmail(email: string, token: string): Promise<void>;
 }

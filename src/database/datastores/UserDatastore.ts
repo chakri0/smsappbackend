@@ -98,4 +98,15 @@ export class UserDatastore {
 			return queryResult;
 		}
 	}
+
+	public async deleteUserById(userId: string): Promise<void> {
+		await dataSource.transaction(async (manager) => {
+			await manager
+				.getRepository(User)
+				.createQueryBuilder('User')
+				.delete()
+				.where('User.id = :id', { id: userId })
+				.execute();
+		});
+	}
 }

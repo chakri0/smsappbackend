@@ -5,6 +5,7 @@ export interface IAppConfig {
 		frontend: {
 			baseUrl: string;
 			accountSetup: string;
+			resetPassword: string;
 		};
 		backend: {
 			baseUrl: string;

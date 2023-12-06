@@ -12,7 +12,7 @@ export class EmailTokenDatastore {
 		if (queryResult) return queryResult;
 	}
 
-	public async deleteTokenByRole(roleId: string): Promise<void> {
+	public async deleteInviteTokenByRole(roleId: string): Promise<void> {
 		await dataSource.transaction(async (manager) => {
 			await manager
 				.createQueryBuilder()
@@ -21,6 +21,20 @@ export class EmailTokenDatastore {
 				.where('roleId = :roleId', { roleId })
 				.andWhere('tokenType = :tokenType', {
 					tokenType: tokenType.invite,
+				})
+				.execute();
+		});
+	}
+
+	public async deleteForgotTokenByRole(roleId: string): Promise<void> {
+		await dataSource.transaction(async (manager) => {
+			await manager
+				.createQueryBuilder()
+				.delete()
+				.from(EmailToken)
+				.where('roleId = :roleId', { roleId })
+				.andWhere('tokenType = :tokenType', {
+					tokenType: tokenType.forgotPassword,
 				})
 				.execute();
 		});

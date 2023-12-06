@@ -11,6 +11,7 @@ export function getConfig() {
 		driver: mysqlDriver,
 		type: 'mysql',
 		host: 'smsappdatabase.cvwwxdsqezfl.us-east-1.rds.amazonaws.com',
+		//host: 'localhost',
 		port: process.env.MY_SQL_PORT,
 		username: 'admin',
 		password: 'test1234',

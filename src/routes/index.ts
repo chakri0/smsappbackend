@@ -4,6 +4,7 @@ import { BranchRoutes } from './branchRoutes/BranchRoutes';
 import { ItemsRoutes } from './itemsRoutes/ItemsRoutes';
 import { CategoryRoutes } from './categoriesRoutes/CategoryRoutes';
 import { InventoryItemsRoutes } from './inventoryItemsRoutes/InventoryItemsRoutes';
+import { DashboardRoutes } from './dashboard/DashboardRoutes';
 
 class Routes {
 	private router: express.Router;
@@ -12,6 +13,7 @@ class Routes {
 	private categoryRoutes: CategoryRoutes;
 	private itemRoutes: ItemsRoutes;
 	private inventoryItemsRoutes: InventoryItemsRoutes;
+	private dashboardRoutes: DashboardRoutes;
 
 	constructor() {
 		this.router = express.Router();
@@ -20,6 +22,7 @@ class Routes {
 		this.categoryRoutes = new CategoryRoutes();
 		this.itemRoutes = new ItemsRoutes();
 		this.inventoryItemsRoutes = new InventoryItemsRoutes();
+		this.dashboardRoutes = new DashboardRoutes();
 		this.initRoutes();
 	}
 
@@ -32,6 +35,7 @@ class Routes {
 			'/inventory/item',
 			this.inventoryItemsRoutes.getRouter(),
 		);
+		this.router.use('/dashboard', this.dashboardRoutes.getRouter());
 	}
 
 	public getRouter(): express.Router {

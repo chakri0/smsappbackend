@@ -6,10 +6,10 @@ import {
 	UpdateDateColumn,
 	JoinColumn,
 	ManyToOne,
-	OneToOne,
 } from 'typeorm';
 import { User } from './User';
 import { Items } from './Items';
+// import { Branch } from './Branch';
 
 export enum statusType {
 	inStock = 'InStock',
@@ -43,7 +43,11 @@ export class InventoryItems {
 	@JoinColumn({ name: 'addedBy' })
 	public addedBy!: User;
 
-	@OneToOne(() => Items, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+	@ManyToOne(() => Items, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
 	@JoinColumn({ name: 'itemId' })
 	public item!: Items;
+
+	// @ManyToOne(() => Branch, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+	// @JoinColumn({ name: 'branchId' })
+	// public branch!: Branch;
 }

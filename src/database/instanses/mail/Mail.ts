@@ -32,6 +32,29 @@ export class Mail implements IMail {
 		}
 	}
 
+	public async sendForgotPasswordEmail(
+		email: string,
+		token: string,
+	): Promise<void> {
+		const sub = 'PhillysBestPizza: Password Reset Request';
+		try {
+			let html = fs.readFileSync(
+				`${process.env.NODE_PATH}/resources/templates/ForgotPasswordTemplate.html`,
+				'utf-8',
+			);
+			// html = html.replace('{{ name }}', firstName);
+			html = html.replace(
+				'{{ Reset Link }}',
+				`${appConfig.app.frontend.baseUrl}${appConfig.app.frontend.resetPassword}?email=${email}&token=${token}`,
+			);
+			await Mail.sendMail(email, sub, html);
+		} catch (error) {
+			console.log(error, 'error');
+
+			throw new Error(`Fail to send mail`);
+		}
+	}
+
 	private static async sendMail(
 		to: string,
 		sub: string,

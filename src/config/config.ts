@@ -2,7 +2,9 @@ export default {
 	app: {
 		frontend: {
 			baseUrl: 'https://main.d255kynncwqvj1.amplifyapp.com',
-			accountSetup: '/accountSetup',
+			//baseUrl: 'http://localhost:1234',
+			accountSetup: '/account-setup',
+			resetPassword: '/reset-password',
 		},
 		backend: {
 			baseUrl: 'http://localhost:3001',
