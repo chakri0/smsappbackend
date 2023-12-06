@@ -186,11 +186,11 @@ export class UserRepository {
 		email: string,
 		password: string,
 	): Promise<void> {
-		/*const tokenVerify =
+		const tokenVerify =
 			await this.emailTokenDatastore.getTokenDetails(token);
 		if (!tokenVerify) {
-			throw new NotFoundException('Verification token expire');
-		}*/
+			throw new NotFoundException('');
+		}
 
 		const userDetail = await this.userDatastore.getUserByEmail(email);
 		if (!userDetail) {
