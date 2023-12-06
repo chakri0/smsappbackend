@@ -33,7 +33,7 @@ class Server {
 		const allowedOrigins = [
 			'http://localhost:1234',
 			'https://www.stockwellnessystem.com',
-			'https://main.d255kynncwqvj1.amplifyapp.com',
+			'https://main.d1xg80dcg8tezd.amplifyapp.com',
 		];
 		const corsOptions: CorsOptions = {
 			origin: allowedOrigins,
