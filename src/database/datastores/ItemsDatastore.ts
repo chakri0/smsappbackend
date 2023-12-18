@@ -68,4 +68,41 @@ export class ItemsDatastore {
 			throw error;
 		}
 	}
+
+	public async getTotalItemsByBranch(branchId: string): Promise<number> {
+		try {
+			let queryResult: number | undefined = 0;
+			await dataSource.transaction(async (manager) => {
+				queryResult = await manager
+					.getRepository(Items)
+					.createQueryBuilder('Items')
+					.select('COUNT(items.id)', 'count')
+					.where('Items.branch = :branchId', { branchId })
+					.getRawOne();
+			});
+			return queryResult ?? 0;
+		} catch (error) {
+			console.error('Error in getTotalItemsByBranch:', error);
+			throw error;
+		}
+	}
+
+	public async getItemsListByBranch(
+		branchId: string,
+	): Promise<Items[] | undefined> {
+		let queryResult: Items[] | undefined | null;
+		await dataSource.transaction(async (manager) => {
+			queryResult = await manager
+				.getRepository(Items)
+				.createQueryBuilder('Items')
+				.leftJoinAndSelect('Items.category', 'category')
+				.leftJoinAndSelect('Items.branch', 'branch')
+				.where('Items.branch = :branchId', { branchId })
+				.getMany();
+		});
+
+		if (queryResult) {
+			return queryResult;
+		}
+	}
 }

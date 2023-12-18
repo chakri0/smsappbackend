@@ -15,9 +15,9 @@ export class DashboardRoutes {
 
 	private setupRoutes() {
 		this.router.get(
-			'/getDetails',
+			'/getDetails/:branchId',
 			this.auth.verifyAccessToken,
-			this.dashboardController.getDashboardDetails,
+			this.dashboardController.getDashboardDetailsByBranch,
 		);
 	}
 

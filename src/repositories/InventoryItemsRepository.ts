@@ -8,22 +8,32 @@ import {
 } from '../database/entities/InventoryItems';
 import { InventoryItemsDatastore } from '../database/datastores/InventroyItemsDatastore';
 import { InventroyItemsReq } from '../controllers/inventoryItemsController/InventoryItemsController';
+import { BranchDatastore } from '../database/datastores/BranchDatastore';
 
 export class InventoryItemsRepository {
 	private userDatastore: UserDatastore;
 	private itemDatastore: ItemsDatastore;
 	private inventroyItemsDatastroe: InventoryItemsDatastore;
+	private branchDatastore: BranchDatastore;
 	constructor() {
 		this.userDatastore = new UserDatastore();
 		this.itemDatastore = new ItemsDatastore();
 		this.inventroyItemsDatastroe = new InventoryItemsDatastore();
+		this.branchDatastore = new BranchDatastore();
 	}
 
 	public async addInventoryItems(
 		data: InventroyItemsReq,
 		activeUserId: string,
 	) {
-		const { availableQuantity, itemId, quantity, expireDate } = data;
+		const {
+			availableQuantity,
+			itemId,
+			quantity,
+			expireDate,
+			updatedAt,
+			branchId,
+		} = data;
 		const existUser = await this.userDatastore.getById(activeUserId);
 		if (!existUser) {
 			throw new NotFoundException(`User not found`);
@@ -34,22 +44,23 @@ export class InventoryItemsRepository {
 			throw new NotFoundException(`Item not found`);
 		}
 
-		/*const existInventroyItem =
-			await this.inventroyItemsDatastroe.getByItemId(itemId);
-		if (existInventroyItem) {
-			throw new NotFoundException(
-				`Inventory Item already added for this item`,
-			);
-		}*/
+		const branchDetials = await this.branchDatastore.getById(branchId);
+		if (!branchDetials) {
+			throw new NotFoundException(`Branch not found`);
+		}
+
 		const newInventoryItem = new InventoryItems();
 		newInventoryItem.id = uuidv4();
 		newInventoryItem.quantity = quantity;
 		newInventoryItem.availableQuantity = availableQuantity;
 		newInventoryItem.status =
 			availableQuantity > 0 ? statusType.inStock : statusType.consumed;
-		newInventoryItem.expireDate = expireDate;
+		newInventoryItem.expireDate = new Date(expireDate);
 		newInventoryItem.item = existItem;
 		newInventoryItem.addedBy = existUser;
+		newInventoryItem.updatedAt = new Date(updatedAt);
+		newInventoryItem.branch = branchDetials;
+
 		await this.inventroyItemsDatastroe.save(newInventoryItem);
 	}
 
@@ -70,7 +81,14 @@ export class InventoryItemsRepository {
 		inventoryItemId: string,
 		activeUserId: string,
 	): Promise<void> {
-		const { availableQuantity, itemId, quantity, expireDate } = data;
+		const {
+			availableQuantity,
+			itemId,
+			quantity,
+			expireDate,
+			updatedAt,
+			branchId,
+		} = data;
 		const existUser = await this.userDatastore.getById(activeUserId);
 		if (!existUser) {
 			throw new NotFoundException(`User not found`);
@@ -87,14 +105,22 @@ export class InventoryItemsRepository {
 			throw new NotFoundException(`InventroyItem not found`);
 		}
 
+		const branchDetials = await this.branchDatastore.getById(branchId);
+		if (!branchDetials) {
+			throw new NotFoundException(`Branch not found`);
+		}
+
 		existInventroyItem.quantity = quantity ?? existInventroyItem.quantity;
 		existInventroyItem.availableQuantity =
 			availableQuantity ?? existInventroyItem.availableQuantity;
 		existInventroyItem.status =
 			availableQuantity > 0 ? statusType.inStock : statusType.consumed;
 		existInventroyItem.expireDate =
-			expireDate ?? existInventroyItem.expireDate;
+			new Date(expireDate) ?? new Date(existInventroyItem.expireDate);
 		existInventroyItem.addedBy = existUser;
+		existInventroyItem.updatedAt = new Date(updatedAt);
+		existInventroyItem.branch = branchDetials;
+
 		await this.inventroyItemsDatastroe.save(existInventroyItem);
 	}
 
@@ -113,5 +139,26 @@ export class InventoryItemsRepository {
 		}
 
 		await this.inventroyItemsDatastroe.deleteInventoryItem(inventoryItemId);
+	}
+
+	public async getInventoryItemListByBranch(
+		activeUserId: string,
+		branchId: string,
+	): Promise<InventoryItems[] | undefined> {
+		const existUser = await this.userDatastore.getById(activeUserId);
+		if (!existUser) {
+			throw new NotFoundException(`User not found`);
+		}
+
+		const existBranch = await this.branchDatastore.getById(branchId);
+		if (!existBranch) {
+			throw new NotFoundException(`Branch not found`);
+		}
+
+		const usersList =
+			await this.inventroyItemsDatastroe.getInventoryItemsListByBranch(
+				branchId,
+			);
+		return usersList;
 	}
 }

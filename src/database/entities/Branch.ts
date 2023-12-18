@@ -7,8 +7,8 @@ import {
 	OneToMany,
 } from 'typeorm';
 import { User } from './User';
-// import { Items } from './Items';
-// import { InventoryItems } from './InventoryItems';
+import { Items } from './Items';
+import { InventoryItems } from './InventoryItems';
 
 @Entity('Branch')
 export class Branch {
@@ -36,9 +36,9 @@ export class Branch {
 	@OneToMany(() => User, (user) => user.branch)
 	public user!: User[];
 
-	// @OneToMany(() => Items, (item) => item.branch)
-	// public item!: Items[];
+	@OneToMany(() => Items, (item) => item.branch)
+	public item!: Items[];
 
-	// @OneToMany(() => InventoryItems, (inventoryItem) => inventoryItem.branch)
-	// public inventoryItem!: InventoryItems[];
+	@OneToMany(() => InventoryItems, (inventoryItem) => inventoryItem.branch)
+	public inventoryItem!: InventoryItems[];
 }

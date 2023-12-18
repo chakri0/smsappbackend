@@ -34,6 +34,11 @@ export class InventoryItemsRoutes {
 			this.auth.verifyAccessToken,
 			this.inventoryItemController.deleteInventoryItem,
 		);
+		this.router.get(
+			'/listByBranch/:branchId',
+			this.auth.verifyAccessToken,
+			this.inventoryItemController.inventoryItemsListByBranch,
+		);
 	}
 
 	public getRouter() {

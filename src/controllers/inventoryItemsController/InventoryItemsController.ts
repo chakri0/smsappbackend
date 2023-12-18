@@ -8,6 +8,8 @@ export interface InventroyItemsReq {
 	quantity: number;
 	availableQuantity: number;
 	expireDate: Date;
+	branchId: string;
+	updatedAt: Date;
 }
 
 class InventoryItemsController {
@@ -101,6 +103,28 @@ class InventoryItemsController {
 				activeUser.id,
 			);
 			res.status(200).json({});
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	public inventoryItemsListByBranch: express.RequestHandler = async (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction,
+	) => {
+		try {
+			const activeUser = UserContext.getActiveUser();
+			if (!activeUser) {
+				throw new NotFoundException(`No user found`);
+			}
+			const { branchId } = req.params;
+			const inventoryItemsList =
+				await this.inventoryItemsRepository.getInventoryItemListByBranch(
+					activeUser.id,
+					branchId,
+				);
+			res.status(200).json({ inventoryItemsList });
 		} catch (error) {
 			next(error);
 		}

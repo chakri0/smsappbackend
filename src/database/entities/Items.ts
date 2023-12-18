@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Categories } from './Categories';
 import { InventoryItems } from './InventoryItems';
-// import { Branch } from './Branch';
+import { Branch } from './Branch';
 
 @Entity('Items')
 export class Items {
@@ -48,7 +48,7 @@ export class Items {
 	@OneToMany(() => InventoryItems, (inventoryItem) => inventoryItem.item)
 	public inventoryItem!: InventoryItems[];
 
-	// @ManyToOne(() => Branch, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-	// @JoinColumn({ name: 'branchId' })
-	// public branch!: Branch;
+	@ManyToOne(() => Branch, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+	@JoinColumn({ name: 'branchId' })
+	public branch!: Branch;
 }

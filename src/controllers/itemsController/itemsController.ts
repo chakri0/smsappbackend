@@ -15,6 +15,7 @@ export interface ItemsReq {
 	dailyThreshold?: number;
 	weeklyThreshold?: number;
 	overallThreshold?: number;
+	branchId: string;
 }
 
 class ItemsController {
@@ -92,6 +93,27 @@ class ItemsController {
 			const { itemId } = req.params;
 			await this.itemRepository.deleteItem(itemId, activeUser.id);
 			res.status(200).json({ message: 'Item deleted successfully' });
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	public itemsListByBranch: express.RequestHandler = async (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction,
+	) => {
+		try {
+			const activeUser = UserContext.getActiveUser();
+			if (!activeUser) {
+				throw new NotFoundException(`No user found`);
+			}
+			const { branchId } = req.params;
+			const itemsList = await this.itemRepository.getItemListByBranch(
+				activeUser.id,
+				branchId,
+			);
+			res.status(200).json({ itemsList });
 		} catch (error) {
 			next(error);
 		}

@@ -1,22 +1,22 @@
 import { v4 as uuidv4 } from 'uuid';
 import { UserDatastore } from '../database/datastores/UserDatastore';
-import { Mail } from '../database/instanses/mail/Mail';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { ItemsReq } from '../controllers/itemsController/itemsController';
 import { Items } from '../database/entities/Items';
 import { CategoryDatastore } from '../database/datastores/CategoryDatastore';
 import { ItemsDatastore } from '../database/datastores/ItemsDatastore';
+import { BranchDatastore } from '../database/datastores/BranchDatastore';
 
 export class ItemsRepository {
 	private userDatastore: UserDatastore;
 	private categoryDatastore: CategoryDatastore;
 	private itemDatastore: ItemsDatastore;
-	private mail: Mail;
+	private branchDatastore: BranchDatastore;
 	constructor() {
 		this.userDatastore = new UserDatastore();
 		this.categoryDatastore = new CategoryDatastore();
 		this.itemDatastore = new ItemsDatastore();
-		this.mail = new Mail();
+		this.branchDatastore = new BranchDatastore();
 	}
 
 	public async addItem(data: ItemsReq, activeUserId: string) {
@@ -28,6 +28,7 @@ export class ItemsRepository {
 			dailyThreshold,
 			weeklyThreshold,
 			overallThreshold,
+			branchId,
 		} = data;
 
 		const existUser = await this.userDatastore.getById(activeUserId);
@@ -39,6 +40,11 @@ export class ItemsRepository {
 		if (!category) {
 			throw new NotFoundException(`Category not found`);
 		}
+
+		const branchDetials = await this.branchDatastore.getById(branchId);
+		if (!branchDetials) {
+			throw new NotFoundException(`Branch not found`);
+		}
 		const item = new Items();
 		item.id = uuidv4();
 		(item.name = name),
@@ -48,6 +54,7 @@ export class ItemsRepository {
 			(item.weeklyThreshold = weeklyThreshold ?? null),
 			(item.overallThreshold = overallThreshold ?? null);
 		item.category = category;
+		item.branch = branchDetials;
 		await this.itemDatastore.save(item);
 	}
 
@@ -79,6 +86,11 @@ export class ItemsRepository {
 		if (!category) {
 			throw new NotFoundException(`Category not found`);
 		}
+
+		const branchDetials = await this.branchDatastore.getById(data.branchId);
+		if (!branchDetials) {
+			throw new NotFoundException(`Branch not found`);
+		}
 		(doesItemExist.name = data.name),
 			(doesItemExist.description = data.description ?? null),
 			(doesItemExist.image = data.image ?? null),
@@ -86,6 +98,7 @@ export class ItemsRepository {
 			(doesItemExist.weeklyThreshold = data.weeklyThreshold ?? null),
 			(doesItemExist.overallThreshold = data.overallThreshold ?? null);
 		doesItemExist.category = category;
+		doesItemExist.branch = branchDetials;
 
 		await this.itemDatastore.save(doesItemExist);
 	}
@@ -105,5 +118,24 @@ export class ItemsRepository {
 		}
 
 		await this.itemDatastore.deleteItem(itemId);
+	}
+
+	public async getItemListByBranch(
+		activeUserId: string,
+		branchId: string,
+	): Promise<Items[] | undefined> {
+		const existUser = await this.userDatastore.getById(activeUserId);
+		if (!existUser) {
+			throw new NotFoundException(`User not found`);
+		}
+
+		const existBranch = await this.branchDatastore.getById(branchId);
+		if (!existBranch) {
+			throw new NotFoundException(`Branch not found`);
+		}
+
+		const usersList =
+			await this.itemDatastore.getItemsListByBranch(branchId);
+		return usersList;
 	}
 }

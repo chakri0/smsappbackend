@@ -13,19 +13,21 @@ class DashboardController {
 		this.dashboardRepository = new DashboardRepository();
 	}
 
-	public getDashboardDetails: express.RequestHandler = async (
+	public getDashboardDetailsByBranch: express.RequestHandler = async (
 		req: express.Request,
 		res: express.Response,
 		next: express.NextFunction,
 	) => {
 		try {
+			const { branchId } = req.params;
 			const activeUser = UserContext.getActiveUser();
 			if (!activeUser) {
 				throw new NotFoundException(`No user found`);
 			}
 			const dasboardDetails =
-				await this.dashboardRepository.getDashboardDetails(
+				await this.dashboardRepository.getDashboardDetailsByBranch(
 					activeUser.id,
+					branchId,
 				);
 			res.status(200).json({ dasboardDetails });
 		} catch (error) {

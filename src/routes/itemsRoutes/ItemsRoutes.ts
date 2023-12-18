@@ -24,6 +24,11 @@ export class ItemsRoutes {
 			this.auth.verifyAccessToken,
 			this.itemController.itemList,
 		);
+		this.router.get(
+			'/listByBranch/:branchId',
+			this.auth.verifyAccessToken,
+			this.itemController.itemsListByBranch,
+		);
 		this.router.put(
 			'/update/:itemId',
 			this.auth.verifyAccessToken,
