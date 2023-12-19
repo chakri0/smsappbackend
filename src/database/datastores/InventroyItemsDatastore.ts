@@ -87,27 +87,19 @@ export class InventoryItemsDatastore {
 			await dataSource.transaction(async (manager) => {
 				queryResult = await manager
 					.getRepository(InventoryItems)
-					.createQueryBuilder('inventoryitems')
+					.createQueryBuilder('InventoryItems')
 					.select([
-						'items.name as itemName',
-						'SUM(inventoryitems.availableQuantity) as availableQuantity',
-						'(SUM(inventoryitems.quantity) - SUM(inventoryitems.availableQuantity)) as dailyConsumption',
-						'items.dailyThreshold',
-						'items.weeklyThreshold',
-						'items.overallThreshold',
-						'categories.name as category',
+						'item.name as itemName',
+						'SUM(InventoryItems.availableQuantity) as availableQuantity',
+						'(SUM(InventoryItems.quantity) - SUM(InventoryItems.availableQuantity)) as dailyConsumption',
+						'item.dailyThreshold',
+						'item.weeklyThreshold',
+						'item.overallThreshold',
+						'category.name as category',
 					])
-					.leftJoin(
-						'items',
-						'items',
-						'items.id = inventoryitems.itemId',
-					)
-					.leftJoin(
-						'categories',
-						'categories',
-						'categories.id = items.categoryId',
-					)
-					.groupBy('items.id')
+					.leftJoin('InventoryItems.item', 'item')
+					.leftJoin('item.category', 'category')
+					.groupBy('item.id')
 					.getRawMany();
 			});
 			return queryResult;
@@ -270,19 +262,15 @@ export class InventoryItemsDatastore {
 			await dataSource.transaction(async (manager) => {
 				queryResult = await manager
 					.getRepository(InventoryItems)
-					.createQueryBuilder('inventoryitems')
+					.createQueryBuilder('InventoryItems')
 					.select([
-						'items.name as itemName',
-						'SUM(inventoryitems.availableQuantity) as wastedQuantity',
+						'item.name as itemName',
+						'SUM(InventoryItems.availableQuantity) as wastedQuantity',
 					])
-					.leftJoin(
-						'items',
-						'items',
-						'items.id = inventoryitems.itemId',
-					)
-					.where('inventoryitems.branchId = :branchId', { branchId })
+					.leftJoin('InventoryItems.item', 'item')
+					.where('InventoryItems.branchId = :branchId', { branchId })
 					.andWhere('CURRENT_DATE > expireDate')
-					.groupBy('items.id')
+					.groupBy('item.id')
 					.getRawMany();
 			});
 			return queryResult;
