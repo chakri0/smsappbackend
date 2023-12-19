@@ -229,7 +229,7 @@ export class InventoryItemsDatastore {
 						'addedBy.lastName',
 					])
 					.where('InventoryItems.branch = :branchId', { branchId })
-					.orderBy('Inventoryitems.addedAt')
+					.orderBy('InventoryItems.addedAt')
 					.limit(10)
 					.getMany();
 			});
