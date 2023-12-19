@@ -76,7 +76,7 @@ export class ItemsDatastore {
 				queryResult = await manager
 					.getRepository(Items)
 					.createQueryBuilder('Items')
-					.select('COUNT(items.id)', 'count')
+					.select('COUNT(Items.id)', 'count')
 					.where('Items.branch = :branchId', { branchId })
 					.getRawOne();
 			});
