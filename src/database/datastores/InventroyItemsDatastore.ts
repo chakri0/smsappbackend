@@ -92,9 +92,9 @@ export class InventoryItemsDatastore {
 						'item.name as itemName',
 						'SUM(InventoryItems.availableQuantity) as availableQuantity',
 						'(SUM(InventoryItems.quantity) - SUM(InventoryItems.availableQuantity)) as dailyConsumption',
-						'item.dailyThreshold',
-						'item.weeklyThreshold',
-						'item.overallThreshold',
+						'item.dailyThreshold as dailyThreshold',
+						'item.weeklyThreshold as weeklyThreshold',
+						'item.overallThreshold as overallThreshold',
 						'category.name as category',
 					])
 					.leftJoin('InventoryItems.item', 'item')
